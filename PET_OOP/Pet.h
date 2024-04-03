@@ -1,6 +1,7 @@
 #ifndef _PETMANAGEMENT_PET_H_
 #define _PETMANAGEMENT_PET_H_
 #include <bits/stdc++.h>
+#include <string>
 using namespace std;
 class Pet
 {
