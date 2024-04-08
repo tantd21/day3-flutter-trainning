@@ -1,11 +1,14 @@
-#include "BangChiTietHD.h"
-#include "ControllerChiTietHD.h"
+#include "../Repository/BangChiTietHD.h"
+#include "../Repository/ControllerChiTietHD.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <unordered_map>
+#include <algorithm>
 
-void readChiTietHDData(std::vector<BangChiTietHD>& chiTietHDs) {
+
+void ControllerChiTietHD::readChiTietHDData(std::vector<BangChiTietHD>& chiTietHDs) {
     std::ifstream inputFile("BangChiTietHD.csv");
     if (!inputFile.is_open()) {
         std::cout << "Failed to open BangChiTietHD file for reading." << std::endl;
@@ -46,7 +49,7 @@ void readChiTietHDData(std::vector<BangChiTietHD>& chiTietHDs) {
     inputFile.close();
 }
 
-void showAllchitietHD(const std::vector<BangChiTietHD>& chiTietHDs) {
+void ControllerChiTietHD::showAllchitietHD(const std::vector<BangChiTietHD>& chiTietHDs) {
     std::cout << "All ChiTietHD:" << std::endl;
     for (const auto& chiTietHD : chiTietHDs) {
         std::cout << "SoHD: " << chiTietHD.getSoHD() << "|";
@@ -57,7 +60,7 @@ void showAllchitietHD(const std::vector<BangChiTietHD>& chiTietHDs) {
     }
 }
 
-void addNewChiTietHD(std::vector<BangChiTietHD>& chiTietHDs) {
+void ControllerChiTietHD::addNewChiTietHD(std::vector<BangChiTietHD>& chiTietHDs) {
     std::string soHD, maSP;
     int soLuong;
     float giaBan;
@@ -80,7 +83,7 @@ void addNewChiTietHD(std::vector<BangChiTietHD>& chiTietHDs) {
     std::cout << "Add new invoice detail successfully." << std::endl;
 }
 
-void modifyChiTietHD(std::vector<BangChiTietHD>& chiTietHDs) {
+void ControllerChiTietHD::modifyChiTietHD(std::vector<BangChiTietHD>& chiTietHDs) {
     std::cout << "Enter the SoHD of the invoice detail to be modified: ";
     std::string soHD;
     std::cin >> soHD;
@@ -112,7 +115,7 @@ void modifyChiTietHD(std::vector<BangChiTietHD>& chiTietHDs) {
     std::cout << "Can't find invoice detail with SoHD: " << soHD << "." << std::endl;
 }
 
-void deleteChiTietHD(std::vector<BangChiTietHD>& chiTietHDs) {
+void ControllerChiTietHD::deleteChiTietHD(std::vector<BangChiTietHD>& chiTietHDs) {
     std::cout << "Enter the SoHD of the invoice detail to be deleted: ";
     std::string soHD;
     std::cin >> soHD;
@@ -127,7 +130,7 @@ void deleteChiTietHD(std::vector<BangChiTietHD>& chiTietHDs) {
     std::cout << "Can't find the invoice detail with SoHD: " << soHD << "." << std::endl;
 }
 
-float calculateTotalForInvoice(const std::vector<BangChiTietHD>& chiTietHDs, const std::string& soHD) {
+float ControllerChiTietHD::calculateTotalForInvoice(const std::vector<BangChiTietHD>& chiTietHDs, const std::string& soHD) {
     float total = 0.0f;
 
     for (const auto& chiTietHD : chiTietHDs) {
@@ -137,4 +140,32 @@ float calculateTotalForInvoice(const std::vector<BangChiTietHD>& chiTietHDs, con
     }
 
     return total;
+}
+
+void ControllerChiTietHD::calculateTopNProductsBySales(const std::vector<BangChiTietHD>& chiTietHDs, int N) {
+    // Tạo một unordered_map để lưu số lượng bán của từng sản phẩm
+    std::unordered_map<std::string, int> productSalesMap;
+
+    // Tính tổng số lượng bán của từng sản phẩm
+    for (const auto& chiTietHD : chiTietHDs) {
+        const std::string& maSP = chiTietHD.getMaSP();
+        int soLuong = chiTietHD.getSoLuong();
+        productSalesMap[maSP] += soLuong;
+    }
+
+    // Chuyển đổi map sang vector để sắp xếp
+    std::vector<std::pair<std::string, int>> productSalesVec(productSalesMap.begin(), productSalesMap.end());
+
+    // Sắp xếp vector theo số lượng bán giảm dần
+    std::sort(productSalesVec.begin(), productSalesVec.end(), 
+              [](const std::pair<std::string, int>& a, const std::pair<std::string, int>& b) {
+                  return a.second > b.second;
+              });
+
+    // Hiển thị top N sản phẩm có số lượng bán nhiều nhất
+    std::cout << "Top " << N << " products by sales quantity:" << std::endl;
+    for (int i = 0; i < std::min(N, static_cast<int>(productSalesVec.size())); ++i) {
+        const auto& product = productSalesVec[i];
+        std::cout << "MaSP: " << product.first << " | SoLuong: " << product.second << std::endl;
+    }
 }

@@ -1,15 +1,19 @@
 #include <iostream>
-#include "BangHoaDon.h"
-#include "Controller.h"
-#include "ControllerChiTietHD.h" // Thêm header file cho ControllerChiTietHD
+#include "Repository/BangHoaDon.h"
+#include "Repository/BangChiTietHD.h"
+#include "Repository/ControllerChiTietHD.h"
+#include "Repository/Controller.h"
 
 int main() {
+    Controller controller;
+    ControllerChiTietHD controllerchitiethoadon;
     int choice;
     std::vector<BangHoaDon> hoadons;
-    std::vector<BangChiTietHD> chiTietHDs; // Thêm vector cho chi tiết hóa đơn
+    std::vector<BangChiTietHD> chiTietHDs;
 
-    readData(hoadons);
-    readChiTietHDData(chiTietHDs); // Đọc dữ liệu cho chi tiết hóa đơn
+    controller.readData(hoadons);
+    
+    controllerchitiethoadon.readChiTietHDData(chiTietHDs);
 
     do {
         std::cout << "Menu:" << std::endl;
@@ -17,55 +21,60 @@ int main() {
         std::cout << "2. Add a new invoice" << std::endl;
         std::cout << "3. Modify an invoice" << std::endl;
         std::cout << "4. Delete an invoice by SoHD" << std::endl;
-        std::cout << "5. Show all invoice details" << std::endl; // Thêm chức năng hiển thị chi tiết hóa đơn
-        std::cout << "6. Add a new invoice detail" << std::endl; // Thêm chức năng thêm chi tiết hóa đơn
-        std::cout << "7. Modify an invoice detail" << std::endl; // Thêm chức năng sửa chi tiết hóa đơn
-        std::cout << "8. Delete an invoice detail by SoHD" << std::endl; // Thêm chức năng xóa chi tiết hóa đơn
-        std::cout << "9. Calculate total amount for a specific invoice" << std::endl; // Thêm chức năng tính tổng tiền cho một hóa đơn cụ thể
+        std::cout << "5. Show all invoice details" << std::endl;
+        std::cout << "6. Add a new invoice detail" << std::endl;
+        std::cout << "7. Modify an invoice detail" << std::endl;
+        std::cout << "8. Delete an invoice detail by SoHD" << std::endl;
+        std::cout << "9. Calculate total amount for a specific invoice" << std::endl;
         std::cout << "10. Exit program" << std::endl;
+        std::cout << "11. Top N products by sales quantity" << std::endl; // Thêm lựa chọn mới
         std::cout << "Enter your choice: ";
         std::cin >> choice;
 
         switch (choice) {
             case 1:
-                showAllhoadons(hoadons);
+                controller.showAllhoadons(hoadons);
                 break;
             case 2:
-                addNewhoadon(hoadons);
+                controller.addNewhoadon(hoadons);
                 break;
             case 3:
-                modifyhoadon(hoadons);
+                controller.modifyhoadon(hoadons);
                 break;
             case 4:
-                deletehoadon(hoadons);
+                controller.deletehoadon(hoadons);
                 break;
             case 5:
-                showAllchitietHD(chiTietHDs); // Hiển thị tất cả chi tiết hóa đơn
+                controllerchitiethoadon.showAllchitietHD(chiTietHDs);
                 break;
             case 6:
-                addNewChiTietHD(chiTietHDs); // Thêm mới chi tiết hóa đơn
+                controllerchitiethoadon.addNewChiTietHD(chiTietHDs);
                 break;
             case 7:
-                modifyChiTietHD(chiTietHDs); // Sửa chi tiết hóa đơn
+                controllerchitiethoadon.modifyChiTietHD(chiTietHDs);
                 break;
             case 8:
-                deleteChiTietHD(chiTietHDs); // Xóa chi tiết hóa đơn
+                controllerchitiethoadon.deleteChiTietHD(chiTietHDs);
                 break;
-       case 9:
-{
-    std::string soHD;
-    std::cout << "Enter the invoice number: ";
-    std::cin >> soHD;
-
-    try {
-        float total = calculateTotalForInvoice(chiTietHDs, soHD);
-        std::cout << "Total amount for invoice " << soHD << ": " << total << std::endl;
-    } catch (const std::invalid_argument& e) {
-        std::cerr << "Invalid invoice number. Please try again." << std::endl;
-    }
-}
-break;
-
+            case 9: {
+                std::string soHD;
+                std::cout << "Enter the invoice number: ";
+                std::cin >> soHD;
+                try {
+                    float total = controllerchitiethoadon.calculateTotalForInvoice(chiTietHDs, soHD);
+                    std::cout << "Total amount for invoice " << soHD << ": " << total << std::endl;
+                } catch (const std::invalid_argument& e) {
+                    std::cerr << "Invalid invoice number. Please try again." << std::endl;
+                }
+                break;
+            }
+            case 11: {
+                int N;
+                std::cout << "Enter the number of top products to display: ";
+                std::cin >> N;
+                controllerchitiethoadon.calculateTopNProductsBySales(chiTietHDs, N);
+                break;
+            }
             case 10:
                 std::cout << "Exiting the program." << std::endl;
                 break;

@@ -1,5 +1,5 @@
-#include "BangChiTietHD.h"
-
+// #include "../Repository/BangChiTietHD.h"
+#include "../Repository/BangChiTietHD.h"
 // Constructor
 BangChiTietHD::BangChiTietHD() 
     : soHD(""), maSP(""), soLuong(0), giaBan(0.0f) {}

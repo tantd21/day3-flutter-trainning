@@ -1,5 +1,5 @@
-#include "BangHoaDon.h"
-
+// #include "../Repository/BangHoaDon.h"
+#include "../Repository/BangHoaDon.h"
 // Constructor
 BangHoaDon::BangHoaDon()
 {

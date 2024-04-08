@@ -1,6 +1,7 @@
-#include "BangHoaDon.h"
+#include "../Repository/BangHoaDon.h"
 #include <bits/stdc++.h>
 #include <dirent.h>
+#include "../Repository/Controller.h"
 
 // void updateHoadonsFile(const std::vector<BangHoaDon>& hoadons)
 // {
@@ -22,9 +23,9 @@
 //     std::cout << "BangHoaDon file updated successfully." << std::endl;
 // }
 
-void readData(std::vector<BangHoaDon>& hoadons)
+void Controller::readData(std::vector<BangHoaDon>& hoadons)
 {
-    std::ifstream inputFile("BangHoaDon.csv");
+    std::ifstream inputFile("Data/BangHoaDon.csv");
     if (!inputFile.is_open())
     {
         std::cout << "Failed to open BangHoaDon file for reading." << std::endl;
@@ -49,6 +50,8 @@ void readData(std::vector<BangHoaDon>& hoadons)
             std::string ngayBan = hoadonData[1];
             std::string maKH = hoadonData[2];
 
+            std::cout << "SoHD: " << soHD << ", NgayBan: " << ngayBan << ", MaKH: " << maKH << std::endl;
+
             BangHoaDon hoadon(soHD, ngayBan, maKH);
             hoadons.push_back(hoadon);
         }
@@ -57,7 +60,7 @@ void readData(std::vector<BangHoaDon>& hoadons)
     inputFile.close();
 }
 
-void showAllhoadons(const std::vector<BangHoaDon>& hoadons)
+void Controller::showAllhoadons(const std::vector<BangHoaDon>& hoadons)
 {
     std::cout << "All HoaDon:" << std::endl;
     for (const auto &hoadon : hoadons)
@@ -68,7 +71,7 @@ void showAllhoadons(const std::vector<BangHoaDon>& hoadons)
     }
 }
 
-void addNewhoadon(std::vector<BangHoaDon>& hoadons)
+void Controller::addNewhoadon(std::vector<BangHoaDon>& hoadons)
 {
     std::string soHD, ngayBan, maKH;
 
@@ -85,7 +88,7 @@ void addNewhoadon(std::vector<BangHoaDon>& hoadons)
     std::cout << "Add new invoice successfully." << std::endl;
 }
 
-void modifyhoadon(std::vector<BangHoaDon>& hoadons)
+void Controller::modifyhoadon(std::vector<BangHoaDon>& hoadons)
 {
     std::cout << "Enter the SoHD of the invoice to be modified: ";
     std::string soHD;
@@ -116,7 +119,7 @@ void modifyhoadon(std::vector<BangHoaDon>& hoadons)
 }
 
 
-void deletehoadon(std::vector<BangHoaDon>& hoadons)
+void Controller::deletehoadon(std::vector<BangHoaDon>& hoadons)
 {
     std::cout << "Enter the number of the invoice to be deleted: ";
     std::string soHD;
