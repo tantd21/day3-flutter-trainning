@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/thaid/Desktop/New folder (2)/C++ Programming/GiuakyC",
-      "program": "c:/Users/thaid/Desktop/New folder (2)/C++ Programming/GiuakyC/build/Debug/outDebug",
+      "cwd": "c:/Users/thaid/Desktop/New folder (2)/C++ Programming/Thuchanh",
+      "program": "c:/Users/thaid/Desktop/New folder (2)/C++ Programming/Thuchanh/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

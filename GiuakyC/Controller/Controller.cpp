@@ -3,57 +3,34 @@
 #include <dirent.h>
 #include "../Repository/Controller.h"
 
-// void updateHoadonsFile(const std::vector<BangHoaDon>& hoadons)
-// {
-//     std::ofstream outputFile("BangHoaDon.csv");
-//     if (!outputFile.is_open())
-//     {
-//         std::cout << "Failed to open BangHoaDon file for writing." << std::endl;
-//         return;
-//     }
 
-//     for (const BangHoaDon& hoadon : hoadons)
-//     {
-//         outputFile << hoadon.getsoHD() << " | "
-//                    << hoadon.getngayBan() << " | "
-//                    << hoadon.getmaKH() << "\n";
-//     }
-
-//     outputFile.close();
-//     std::cout << "BangHoaDon file updated successfully." << std::endl;
-// }
-
-void Controller::readData(std::vector<BangHoaDon>& hoadons)
-{
+void Controller::readData(std::vector<BangHoaDon>& hoadons) {
     std::ifstream inputFile("Data/BangHoaDon.csv");
-    if (!inputFile.is_open())
-    {
-        std::cout << "Failed to open BangHoaDon file for reading." << std::endl;
+    if (!inputFile.is_open()) {
+        std::cerr << "Failed to open BangHoaDon file for reading." << std::endl;
         return;
     }
 
     std::string line;
-    while (std::getline(inputFile, line))
-    {
+    std::getline(inputFile, line); // Bỏ qua dòng đầu tiên
+    while (std::getline(inputFile, line)) {
         std::istringstream iss(line);
         std::string token;
         std::vector<std::string> hoadonData;
 
-        while (std::getline(iss, token, '|'))
-        {
+        while (std::getline(iss, token, '|')) {
             hoadonData.push_back(token);
         }
 
-        if (hoadonData.size() == 3)
-        {
+        if (hoadonData.size() == 3) {
             std::string soHD = hoadonData[0];
             std::string ngayBan = hoadonData[1];
             std::string maKH = hoadonData[2];
 
-            std::cout << "SoHD: " << soHD << ", NgayBan: " << ngayBan << ", MaKH: " << maKH << std::endl;
-
             BangHoaDon hoadon(soHD, ngayBan, maKH);
             hoadons.push_back(hoadon);
+        } else {
+            std::cout << "Invalid data format in BangHoaDon.csv. Skipping this line." << std::endl;
         }
     }
 

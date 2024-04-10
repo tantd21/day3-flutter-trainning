@@ -3,6 +3,7 @@
 #include "Repository/BangChiTietHD.h"
 #include "Repository/ControllerChiTietHD.h"
 #include "Repository/Controller.h"
+#include "Repository/BangSanPham.h"
 
 int main() {
     Controller controller;
@@ -10,10 +11,14 @@ int main() {
     int choice;
     std::vector<BangHoaDon> hoadons;
     std::vector<BangChiTietHD> chiTietHDs;
+    std::vector<BangSanPham> sanPham; // Khai báo vector cho sản phẩm
 
     controller.readData(hoadons);
     
     controllerchitiethoadon.readChiTietHDData(chiTietHDs);
+
+    controllerchitiethoadon.readSanPhamData(sanPham);
+    
 
     do {
         std::cout << "Menu:" << std::endl;
@@ -72,7 +77,7 @@ int main() {
                 int N;
                 std::cout << "Enter the number of top products to display: ";
                 std::cin >> N;
-                controllerchitiethoadon.calculateTopNProductsBySales(chiTietHDs, N);
+                 controllerchitiethoadon.calculateTopNProductsBySales(chiTietHDs, sanPham, N); // Thêm tham số N vào hàm gọi
                 break;
             }
             case 10:

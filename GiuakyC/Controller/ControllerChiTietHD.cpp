@@ -1,15 +1,53 @@
 #include "../Repository/BangChiTietHD.h"
 #include "../Repository/ControllerChiTietHD.h"
+#include "../Repository/BangSanPham.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <algorithm>
+void ControllerChiTietHD::readSanPhamData(std::vector<BangSanPham>& sanPham) {
+    std::ifstream inputFile("Data/BangSanPham.csv");
 
+    if (!inputFile.is_open()) {
+        std::cerr << "Failed to open BangSanPham.csv for reading." << std::endl;
+        return;
+    }
+
+    std::string line;
+    while (std::getline(inputFile, line)) {
+        std::istringstream iss(line);
+        std::string token;
+        std::vector<std::string> sanPhamData;
+
+        while (std::getline(iss, token, '|')) {
+            sanPhamData.push_back(token);
+        }
+
+        if (sanPhamData.size() == 4) {
+            std::string maSP = sanPhamData[0];
+            std::string tenSP = sanPhamData[1];
+            std::string trongLuong = sanPhamData[2];
+            std::string qcDongGoi = sanPhamData[3];
+
+            BangSanPham bangSanPham(maSP, tenSP, trongLuong, qcDongGoi);
+            sanPham.push_back(bangSanPham);
+        }
+    }
+
+    inputFile.close();
+
+    // In ra toàn bộ dữ liệu đã đọc được từ file
+    std::cout << "San Pham Data:" << std::endl;
+    for (const auto& sp : sanPham) {
+        std::cout << "MaSP: " << sp.getMaSP() << " | TenSP: " << sp.getTenSP()
+                  << " | TrongLuong: " << sp.getTrongLuong() << " | QCDongGoi: " << sp.getQCDongGoi() << std::endl;
+    }
+}
 
 void ControllerChiTietHD::readChiTietHDData(std::vector<BangChiTietHD>& chiTietHDs) {
-    std::ifstream inputFile("BangChiTietHD.csv");
+    std::ifstream inputFile("Data/BangChiTietHD.csv");
     if (!inputFile.is_open()) {
         std::cout << "Failed to open BangChiTietHD file for reading." << std::endl;
         return;
@@ -32,15 +70,22 @@ void ControllerChiTietHD::readChiTietHDData(std::vector<BangChiTietHD>& chiTietH
             int soLuong;
             float giaBan;
 
-            // Kiểm tra nếu có thể chuyển đổi giá trị thành số nguyên và số thực
-            if (!(std::istringstream(chiTietHDData[2]) >> soLuong) ||
-                !(std::istringstream(chiTietHDData[3]) >> giaBan)) {
-                std::cout << "Invalid data format in BangChiTietHD.csv. Skipping this line." << std::endl;
+            // Try to convert string to integer (soLuong) and float (giaBan)
+            try {
+                soLuong = std::stoi(chiTietHDData[2]);
+                giaBan = std::stof(chiTietHDData[3]);
+            } catch (const std::invalid_argument& e) {
+                // If conversion fails, silently skip this line
+                continue;
+            } catch (const std::out_of_range& e) {
+                // If conversion causes out of range error, silently skip this line
                 continue;
             }
 
+            // If conversion succeeded, calculate total price
             float tongTien = soLuong * giaBan;
 
+            // Create BangChiTietHD object and add to vector
             BangChiTietHD chiTietHD(soHD, maSP, soLuong, giaBan);
             chiTietHDs.push_back(chiTietHD);
         }
@@ -141,8 +186,7 @@ float ControllerChiTietHD::calculateTotalForInvoice(const std::vector<BangChiTie
 
     return total;
 }
-
-void ControllerChiTietHD::calculateTopNProductsBySales(const std::vector<BangChiTietHD>& chiTietHDs, int N) {
+void ControllerChiTietHD::calculateTopNProductsBySales(const std::vector<BangChiTietHD>& chiTietHDs, const std::vector<BangSanPham>& sanPham, int N) {
     // Tạo một unordered_map để lưu số lượng bán của từng sản phẩm
     std::unordered_map<std::string, int> productSalesMap;
 
@@ -166,6 +210,15 @@ void ControllerChiTietHD::calculateTopNProductsBySales(const std::vector<BangChi
     std::cout << "Top " << N << " products by sales quantity:" << std::endl;
     for (int i = 0; i < std::min(N, static_cast<int>(productSalesVec.size())); ++i) {
         const auto& product = productSalesVec[i];
-        std::cout << "MaSP: " << product.first << " | SoLuong: " << product.second << std::endl;
+        // Tìm tên sản phẩm tương ứng với mã sản phẩm (MaSP)
+        std::string tenSP = "Unknown"; // Giả sử không tìm thấy tên sản phẩm
+        for (const auto& sp : sanPham) {
+            if (sp.getMaSP() == product.first) {
+                tenSP = sp.getTenSP();
+                break;
+            }
+        }
+        // Hiển thị thông tin sản phẩm
+        std::cout << "MaSP: " << product.first << " | TenSP: " << tenSP << " | SoLuong: " << product.second << std::endl;
     }
 }

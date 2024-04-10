@@ -2,6 +2,7 @@
 #define CONTROLLERCHITIETHD_H
 
 #include "BangChiTietHD.h"
+#include "BangSanPham.h"
 #include <vector>
 class ControllerChiTietHD
 {
@@ -14,7 +15,8 @@ public:
      void modifyChiTietHD(std::vector<BangChiTietHD>& chiTietHDs);
      void deleteChiTietHD(std::vector<BangChiTietHD>& chiTietHDs);
      float calculateTotalForInvoice(const std::vector<BangChiTietHD>& chiTietHDs, const std::string& soHD);
-     void calculateTopNProductsBySales(const std::vector<BangChiTietHD>& chiTietHDs, int N);
+     void calculateTopNProductsBySales(const std::vector<BangChiTietHD>& chiTietHDs, const std::vector<BangSanPham>& sanPham, int N);
+     void readSanPhamData(std::vector<BangSanPham>& sanPham);
 
 };
 
